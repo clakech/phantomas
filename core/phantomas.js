@@ -18,6 +18,9 @@ var phantomas = function(params) {
 
 	// --url=http://example.com
 	this.url = this.params.url;
+	
+	// --auth=http://example.com?token=123
+	this.auth = this.params.auth;
 
 	// --format=[csv|json]
 	this.resultsFormat = params.format || 'plain';
@@ -43,8 +46,10 @@ var phantomas = function(params) {
 	// setup the stuff
 	this.emitter = new (this.require('events').EventEmitter)();
 	this.emitter.setMaxListeners(200);
-
-	this.page = require('webpage').create();
+	
+	var webpage = require('webpage');
+	this.page = webpage.create();
+	this.pageAuth = webpage.create();
 
 	// current HTTP requests counter
 	this.currentRequests = 0;
@@ -207,6 +212,13 @@ phantomas.prototype = {
 		this.log('Opening <' + this.url + '>...');
 		this.log('Using ' + this.page.settings.userAgent + ' as user agent');
 		this.log('Viewport set to ' + this.page.viewportSize.height + 'x' + this.page.viewportSize.width);
+
+	    	pageAuth.open(this.auth, function (status) {
+	        	if (status !== 'success') {
+	            		console.log('FAIL to load the auth address');
+	            		phantom.exit(1);
+	        	}
+	    	});
 
 		// bind basic events
 		this.page.onInitialized = this.proxy(this.onInitialized);
