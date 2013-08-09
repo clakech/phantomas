@@ -213,7 +213,7 @@ phantomas.prototype = {
 		this.log('Using ' + this.page.settings.userAgent + ' as user agent');
 		this.log('Viewport set to ' + this.page.viewportSize.height + 'x' + this.page.viewportSize.width);
 
-	    	pageAuth.open(this.auth, function (status) {
+	    	this.pageAuth.open(this.auth, function (status) {
 	        	if (status !== 'success') {
 	            		console.log('FAIL to load the auth address');
 	            		phantom.exit(1);
